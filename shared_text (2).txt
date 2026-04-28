@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Meta GSP</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<h1>Bem-vindo ao Meta GSP</h1>
+<input type="text" id="userInput" placeholder="Fala comigo...">
+<button onclick="responder()">Enviar</button>
+
+<p id="resposta"></p>
+
+<script src="script.js"></script>
+</body>
+</html>
