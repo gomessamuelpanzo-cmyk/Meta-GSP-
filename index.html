@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Assistente Virtual GSP</title>
+
+<style>
+body {
+    font-family: Arial;
+    background: #0d1117;
+    color: white;
+    text-align: center;
+}
+
+h2 {
+    color: #58a6ff;
+}
+
+#chat {
+    width: 90%;
+    max-width: 400px;
+    height: 350px;
+    margin: auto;
+    border: 1px solid #30363d;
+    padding: 10px;
+    overflow-y: auto;
+    border-radius: 10px;
+}
+
+input {
+    width: 70%;
+    padding: 10px;
+    border-radius: 8px;
+    border: none;
+}
+
+button {
+    padding: 10px;
+    border-radius: 8px;
+    border: none;
+    background: #238636;
+    color: white;
+    cursor: pointer;
+}
+
+.msg-user {
+    text-align: right;
+    color: #58a6ff;
+}
+
+.msg-bot {
+    text-align: left;
+    color: #c9d1d9;
+}
+</style>
+</head>
+
+<body>
+
+<h2>🤖 Assistente Virtual GSP</h2>
+
+<div id="chat"></div>
+
+<br>
+
+<input type="text" id="msg" placeholder="Digite algo...">
+<button onclick="enviar()">Enviar</button>
+
+<script>
+function responder(msg) {
+    msg = msg.toLowerCase();
+
+    if (msg.includes("olá") || msg.includes("ola")) {
+        return "Olá! Eu sou o assistente GSP 🤖";
+    }
+
+    if (msg.includes("nome")) {
+        return "Sou o assistente virtual GSP.";
+    }
+
+    if (msg.includes("hora")) {
+        let agora = new Date();
+        return "Agora são " + agora.getHours() + ":" + agora.getMinutes();
+    }
+
+    if (msg.includes("quem criou")) {
+        return "Fui criado por Gomes Samuel Panzo 🔥";
+    }
+
+    return "Ainda estou aprendendo 😅";
+}
+
+function enviar() {
+    let input = document.getElementById("msg");
+    let chat = document.getElementById("chat");
+
+    let texto = input.value;
+
+    if (texto === "") return;
+
+    chat.innerHTML += `<p class="msg-user"><b>Você:</b> ${texto}</p>`;
+
+    let resposta = responder(texto);
+
+    setTimeout(() => {
+        chat.innerHTML += `<p class="msg-bot"><b>GSP:</b> ${resposta}</p>`;
+        chat.scrollTop = chat.scrollHeight;
+    }, 500);
+
+    input.value = "";
+}
+</script>
+
+</body>
+</html>
