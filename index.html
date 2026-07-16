@@ -81,6 +81,39 @@ html,body{height:100%;height:100dvh;background:var(--bg);color:var(--chalk);font
 .token-fill{height:100%;background:var(--grad-brand);border-radius:3px;transition:width .4s}
 @keyframes hb{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.7)}}
 
+/* ══════════ CHAMADA (voz em tempo real) ══════════ */
+.call-ov{position:fixed;inset:0;z-index:200;background:radial-gradient(circle at 50% 28%,#0d1219,#050709 72%);display:none;flex-direction:column;align-items:center;justify-content:space-between;padding:calc(var(--st) + 44px) 24px calc(var(--sb) + 44px);color:var(--chalk);text-align:center}
+[data-theme="light"] .call-ov{background:radial-gradient(circle at 50% 28%,#f4f7fb,#eef3f8 72%)}
+.call-ov.on{display:flex}
+.call-name{font-size:20px;font-weight:800;letter-spacing:-.2px}
+.call-state{font-size:12.5px;color:var(--cyan);margin-top:7px;font-family:'JetBrains Mono',monospace;letter-spacing:1.5px;text-transform:uppercase}
+.call-avatar-wrap{position:relative;width:180px;height:180px;display:flex;align-items:center;justify-content:center}
+.call-ring{position:absolute;inset:0;border-radius:50%;border:2px solid rgba(0,212,255,.32);opacity:0}
+.call-ring.r2{inset:-20px;border-color:rgba(139,92,246,.24)}
+.call-ring.r3{inset:-40px;border-color:rgba(16,240,144,.16)}
+.call-avatar-wrap.listening .call-ring,.call-avatar-wrap.speaking .call-ring{animation:callPulse 1.7s ease-out infinite}
+.call-avatar-wrap.speaking .call-ring{animation-duration:1s;border-color:rgba(16,240,144,.4)}
+.call-ring.r2{animation-delay:.28s !important}
+.call-ring.r3{animation-delay:.56s !important}
+@keyframes callPulse{0%{transform:scale(.88);opacity:.85}100%{transform:scale(1.4);opacity:0}}
+.call-avatar{width:134px;height:134px;border-radius:50%;object-fit:cover;box-shadow:0 0 44px rgba(0,212,255,.28)}
+.call-transcript{max-width:320px;font-size:14px;color:var(--fog);min-height:44px;line-height:1.5;padding:0 6px}
+.call-actions{display:flex;gap:26px;align-items:center}
+.call-btn{width:58px;height:58px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:22px;transition:all .18s}
+.call-btn:active{transform:scale(.9)}
+.call-btn.mute{background:var(--lift);border:1px solid var(--rim);color:var(--chalk)}
+.call-btn.mute.on{background:var(--amber);color:#04080c;border-color:var(--amber)}
+.call-btn.end{background:var(--red);color:#fff;width:66px;height:66px;font-size:27px}
+
+.set-row{margin-bottom:18px}
+.set-label{font-size:12.5px;color:var(--fog);margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.set-select{width:100%;padding:11px 13px;background:var(--lift);border:1px solid var(--rim);border-radius:12px;color:var(--chalk);font-family:'Outfit',sans-serif;font-size:13px}
+.set-btn{padding:9px 15px;background:var(--lift);border:1px solid var(--rim);border-radius:12px;color:var(--chalk);font-family:'Outfit',sans-serif;font-size:12.5px;font-weight:600;cursor:pointer;white-space:nowrap}
+.set-btn:active{transform:scale(.96)}
+.set-range{width:100%;accent-color:var(--cyan)}
+.set-test-btn{width:100%;padding:12px;background:linear-gradient(135deg,rgba(0,212,255,.14),rgba(139,92,246,.14));border:1px solid rgba(0,212,255,.3);border-radius:14px;color:var(--cyan);font-family:'Outfit',sans-serif;font-size:13px;font-weight:700;cursor:pointer;margin-bottom:6px}
+.set-test-btn:active{transform:scale(.98)}
+
 /* ══════════ SHELL ══════════ */
 .shell{flex:1;min-width:0;display:flex;flex-direction:column;height:100%;height:100dvh;overflow:hidden}
 
@@ -231,7 +264,7 @@ textarea::placeholder{color:var(--mist)}
 /* ── MODALS ── */
 .modal-bg{display:none;position:fixed;inset:0;background:var(--ob);backdrop-filter:blur(10px);z-index:150;align-items:flex-end;justify-content:center}
 .modal-bg.on{display:flex}
-.modal{background:var(--card);border:1px solid var(--wire);border-radius:26px 26px 0 0;padding:22px 22px calc(var(--sb)+22px);width:100%;max-width:480px;animation:slideUp .32s cubic-bezier(.34,1.56,.64,1) both}
+.modal{background:var(--card);border:1px solid var(--wire);border-radius:26px 26px 0 0;padding:22px 22px calc(var(--sb)+22px);width:100%;max-width:480px;max-height:85vh;max-height:85dvh;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;animation:slideUp .32s cubic-bezier(.34,1.56,.64,1) both}
 @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
 .modal-title{font-size:17px;font-weight:800;margin-bottom:16px;display:flex;align-items:center;gap:9px}
 .modal-close{margin-left:auto;background:var(--lift);border:1px solid var(--rim);border-radius:10px;width:32px;height:32px;color:var(--fog);cursor:pointer;font-size:18px;padding:0;line-height:1;display:flex;align-items:center;justify-content:center}
@@ -301,6 +334,46 @@ textarea::placeholder{color:var(--mist)}
   </div>
 </div>
 
+<!-- SETTINGS MODAL -->
+<div class="modal-bg" id="setModal" onclick="if(event.target===this)closeSettings()">
+  <div class="modal">
+    <div class="modal-title">⚙️ Configurações <button class="modal-close" onclick="closeSettings()">×</button></div>
+
+    <div class="set-row">
+      <div class="set-label">🎨 Tema</div>
+      <button class="set-btn" id="setThBtn" onclick="toggleTheme(); document.getElementById('setThBtn').textContent = document.documentElement.getAttribute('data-theme')==='dark' ? '🌙 Escuro' : '☀️ Claro';">🌙 Escuro</button>
+    </div>
+
+    <div class="set-row">
+      <div class="set-label">🗣️ Voz do assistente</div>
+      <select class="set-select" id="setVoiceSel" onchange="onSettingsVoiceChange(this)"></select>
+    </div>
+
+    <div class="set-row">
+      <div class="set-label">🌍 Idioma (voz e reconhecimento)</div>
+      <select class="set-select" id="setLangSel" onchange="onSettingsLangChange(this)">
+        <option value="pt-PT">Português (Portugal)</option>
+        <option value="pt-BR">Português (Brasil)</option>
+        <option value="en-US">English (US)</option>
+        <option value="es-ES">Español</option>
+        <option value="fr-FR">Français</option>
+      </select>
+    </div>
+
+    <div class="set-row">
+      <div class="set-label">⏱️ Velocidade da voz <span id="setRateVal">1.0x</span></div>
+      <input class="set-range" type="range" id="setRateRange" min="0.6" max="1.6" step="0.1" oninput="onSettingsRateChange(this)">
+    </div>
+
+    <button class="set-test-btn" onclick="testVoice()">▶️ Testar voz</button>
+
+    <div class="set-row" style="margin-top:6px">
+      <div class="set-label">🎙️ Permissão do microfone <span id="micStatus" style="color:var(--cyan)">A verificar...</span></div>
+      <button class="set-btn" onclick="requestMicPermission()">Pedir permissão</button>
+    </div>
+  </div>
+</div>
+
 <div class="page">
 <aside class="drawer" id="dr">
   <div class="d-top">
@@ -317,6 +390,12 @@ textarea::placeholder{color:var(--mist)}
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
       Nova Conversa
     </button>
+    <div class="d-section">Ferramentas de Imagem IA</div>
+    <div class="d-item" onclick="document.getElementById('photoInp').click(); if(window.innerWidth<640) closeDr();">📷 Enviar foto</div>
+    <div class="d-item" onclick="openImageTool('objects')">🔍 Reconhecimento de objetos e cenários</div>
+    <div class="d-item" onclick="openImageTool('emotion')">😊 Análise de sentimentos e emoções</div>
+    <div class="d-item" onclick="openImageTool('access')">♿ Descrição de imagens (acessibilidade)</div>
+    <div class="d-item" onclick="openSettings()">⚙️ Configurações</div>
     <div class="d-section" id="pinSec" style="display:none">📌 Fixadas</div>
     <div id="pinList"></div>
     <div class="d-section">Histórico</div>
@@ -384,10 +463,9 @@ textarea::placeholder{color:var(--mist)}
     </div>
     <div class="i-row">
 
-      <button class="i-icon-btn" onclick="document.getElementById('photoInp').click()" title="Foto">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
-      </button>
+      <button class="i-icon-btn" onclick="openCall()" title="Chamada de voz">📞</button>
       <input type="file" id="photoInp" style="display:none" onchange="onPhoto(this)" accept="image/*" capture="environment">
+      <input type="file" id="imgToolInp" style="display:none" onchange="onImageToolFile(this)" accept="image/*">
 
       <div class="i-box">
         <textarea id="inp" placeholder="Em que posso ajudar hoje?" rows="1" onkeydown="onKey(event)" oninput="onInput(this)"></textarea>
@@ -404,21 +482,286 @@ textarea::placeholder{color:var(--mist)}
 
   </div>
 </main>
+
+<div class="call-ov" id="callOv">
+  <div>
+    <div class="call-name">Meta GSP</div>
+    <div class="call-state" id="callState">A ligar...</div>
+  </div>
+  <div class="call-avatar-wrap" id="callAvWrap">
+    <div class="call-ring"></div><div class="call-ring r2"></div><div class="call-ring r3"></div>
+    <img class="call-avatar" id="callAvImg" src="" alt="Meta GSP">
+  </div>
+  <div class="call-transcript" id="callTranscript">Fale quando estiver pronto...</div>
+  <div class="call-actions">
+    <button class="call-btn mute" id="callMuteBtn" onclick="toggleCallMute()" title="Silenciar microfone">🎙️</button>
+    <button class="call-btn end" onclick="closeCall()" title="Terminar chamada">📵</button>
+  </div>
+</div>
 </div>
 
 <script>
 var LOGO = "##LOGO##";
 var SYS = "Voce e Meta GSP, assistente de IA avancado. O seu desenvolvedor e Gomes Samuel Panzo. Se perguntarem quem te criou, diga sempre: Fui desenvolvido por Gomes Samuel Panzo. Responda sempre em portugues. Seja preciso e claro. Use **negrito** e codigo com backtick quando adequado. Tom profissional mas amigavel.";
 var hist = [], msgN = 0, pendingFile = null, curSpeak = null;
+
+/* ══════════ MODO CHAMADA (voz em tempo real) ══════════ */
+var callActive = false, callMuted = false, callBusy = false, recog = null;
+
+function setCallState(state) {
+  var el = document.getElementById('callState');
+  var wrap = document.getElementById('callAvWrap');
+  wrap.classList.remove('listening', 'speaking');
+  if (state === 'listening') { el.textContent = 'A ouvir...'; wrap.classList.add('listening'); }
+  else if (state === 'thinking') { el.textContent = 'A pensar...'; }
+  else if (state === 'speaking') { el.textContent = 'A falar...'; wrap.classList.add('speaking'); }
+  else if (state === 'muted') { el.textContent = 'Microfone silenciado'; }
+  else { el.textContent = 'Toque no microfone para falar'; }
+}
+
+function openCall() {
+  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) { showToast('🎙️ O seu navegador não suporta reconhecimento de voz'); return; }
+  document.getElementById('callAvImg').src = LOGO;
+  document.getElementById('callOv').classList.add('on');
+  document.getElementById('callTranscript').textContent = 'Fale quando estiver pronto...';
+  document.getElementById('callMuteBtn').classList.remove('on');
+  callActive = true; callMuted = false; callBusy = false;
+  startListening();
+}
+
+function closeCall() {
+  callActive = false; callBusy = false;
+  if (recog) { try { recog.onend = null; recog.onerror = null; recog.stop(); } catch (e) {} }
+  if (window.speechSynthesis) window.speechSynthesis.cancel();
+  document.getElementById('callOv').classList.remove('on');
+}
+
+function toggleCallMute() {
+  callMuted = !callMuted;
+  document.getElementById('callMuteBtn').classList.toggle('on', callMuted);
+  if (callMuted) {
+    if (recog) { try { recog.onend = null; recog.stop(); } catch (e) {} }
+    setCallState('muted');
+  } else if (callActive && !callBusy) {
+    startListening();
+  }
+}
+
+function startListening() {
+  if (!callActive || callMuted || callBusy) return;
+  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  recog = new SR();
+  recog.lang = APP_SETTINGS.lang;
+  recog.interimResults = false;
+  recog.maxAlternatives = 1;
+  setCallState('listening');
+  recog.onresult = function(e) {
+    var text = e.results[0][0].transcript;
+    document.getElementById('callTranscript').textContent = text;
+    handleCallTurn(text);
+  };
+  recog.onerror = function(e) {
+    if (e.error === 'no-speech' && callActive && !callMuted && !callBusy) { startListening(); }
+    else if (e.error === 'not-allowed') { showToast('🎙️ Permissão de microfone negada'); closeCall(); }
+  };
+  try { recog.start(); } catch (e) {}
+}
+
+async function handleCallTurn(text) {
+  if (!text || !text.trim()) { startListening(); return; }
+  callBusy = true;
+  setCallState('thinking');
+  hist.push({ role: 'user', content: text });
+  addMsg('user', text);
+  try {
+    var contents = hist.map(function(m) {
+      return { role: m.role === 'assistant' ? 'model' : 'user', parts: [{ text: m.content }] };
+    });
+    var res = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ contents: contents, system: SYS })
+    });
+    var data = await res.json();
+    var reply = data.candidates && data.candidates[0] && data.candidates[0].content &&
+      data.candidates[0].content.parts && data.candidates[0].content.parts[0].text;
+    if (!reply) reply = 'Desculpa, não consegui responder agora.';
+    hist.push({ role: 'assistant', content: reply });
+    addMsg('assistant', reply);
+    document.getElementById('callTranscript').textContent = reply;
+    speakCallReply(reply);
+  } catch (e) {
+    callBusy = false;
+    showToast('Erro na chamada: ' + e.message);
+    if (callActive && !callMuted) startListening(); else setCallState('idle');
+  }
+}
+
+function speakCallReply(text) {
+  if (!window.speechSynthesis) { callBusy = false; if (callActive && !callMuted) startListening(); return; }
+  setCallState('speaking');
+  var utter = new SpeechSynthesisUtterance(text.replace(/\*\*/g, '').replace(/`/g, ''));
+  utter.lang = APP_SETTINGS.lang; utter.rate = APP_SETTINGS.rate;
+  var pt = getPickedVoice();
+  if (pt) utter.voice = pt;
+  utter.onend = function() {
+    callBusy = false;
+    if (callActive && !callMuted) startListening(); else setCallState('idle');
+  };
+  utter.onerror = function() {
+    callBusy = false;
+    if (callActive && !callMuted) startListening();
+  };
+  window.speechSynthesis.speak(utter);
+}
 var mediaRec = null, recStream = null, recChunks = [], recTimer = null, recSecs = 0;
 var totalTok = 0, transId = null, srchOpen = false;
+
+function loadSettings() {
+  try {
+    var raw = localStorage.getItem('metagsp_settings');
+    if (raw) { var s = JSON.parse(raw); return { lang: s.lang || 'pt-PT', voiceURI: s.voiceURI || null, rate: s.rate || 1, theme: s.theme || 'dark' }; }
+  } catch (e) {}
+  return { lang: 'pt-PT', voiceURI: null, rate: 1, theme: 'dark' };
+}
+function saveSettings() { try { localStorage.setItem('metagsp_settings', JSON.stringify(APP_SETTINGS)); } catch (e) {} }
+var APP_SETTINGS = loadSettings();
+document.documentElement.setAttribute('data-theme', APP_SETTINGS.theme);
+var thBtnInit = document.getElementById('thBtn');
+if (thBtnInit) thBtnInit.textContent = APP_SETTINGS.theme === 'dark' ? '🌙' : '☀️';
+if (window.speechSynthesis) {
+  window.speechSynthesis.onvoiceschanged = function() {
+    var sel = document.getElementById('setVoiceSel');
+    if (sel && document.getElementById('setModal').classList.contains('on')) populateVoiceSelect();
+  };
+}
 
 function toggleTheme() {
   var d = document.documentElement;
   var dark = d.getAttribute('data-theme') === 'dark';
   d.setAttribute('data-theme', dark ? 'light' : 'dark');
   document.getElementById('thBtn').textContent = dark ? '☀️' : '🌙';
+  APP_SETTINGS.theme = dark ? 'light' : 'dark';
+  saveSettings();
   showToast(dark ? 'Modo claro ativado' : 'Modo escuro ativado');
+}
+
+function getPickedVoice() {
+  var voices = window.speechSynthesis ? window.speechSynthesis.getVoices() : [];
+  if (APP_SETTINGS.voiceURI) {
+    var v = voices.find(function(v) { return v.voiceURI === APP_SETTINGS.voiceURI; });
+    if (v) return v;
+  }
+  return voices.find(function(v) { return v.lang && v.lang.toLowerCase().indexOf('pt') === 0; }) || null;
+}
+
+function openSettings() {
+  if (window.innerWidth < 640) closeDr();
+  document.getElementById('setThBtn').textContent = document.documentElement.getAttribute('data-theme') === 'dark' ? '🌙 Escuro' : '☀️ Claro';
+  populateVoiceSelect();
+  document.getElementById('setLangSel').value = APP_SETTINGS.lang;
+  document.getElementById('setRateRange').value = APP_SETTINGS.rate;
+  document.getElementById('setRateVal').textContent = APP_SETTINGS.rate.toFixed(1) + 'x';
+  checkMicStatus();
+  document.getElementById('setModal').classList.add('on');
+}
+function closeSettings() { document.getElementById('setModal').classList.remove('on'); }
+
+function populateVoiceSelect() {
+  var sel = document.getElementById('setVoiceSel');
+  var voices = window.speechSynthesis ? window.speechSynthesis.getVoices() : [];
+  var ptVoices = voices.filter(function(v) { return v.lang && v.lang.toLowerCase().indexOf('pt') === 0; });
+  var list = ptVoices.length ? ptVoices : voices;
+  if (!list.length) { sel.innerHTML = '<option value="">A carregar vozes...</option>'; return; }
+  sel.innerHTML = list.map(function(v) {
+    return '<option value="' + v.voiceURI + '">' + v.name + ' (' + v.lang + ')</option>';
+  }).join('');
+  if (APP_SETTINGS.voiceURI) sel.value = APP_SETTINGS.voiceURI;
+}
+function onSettingsVoiceChange(sel) { APP_SETTINGS.voiceURI = sel.value; saveSettings(); }
+function onSettingsLangChange(sel) { APP_SETTINGS.lang = sel.value; saveSettings(); }
+function onSettingsRateChange(range) {
+  APP_SETTINGS.rate = parseFloat(range.value);
+  document.getElementById('setRateVal').textContent = APP_SETTINGS.rate.toFixed(1) + 'x';
+  saveSettings();
+}
+function testVoice() {
+  if (!window.speechSynthesis) { showToast('🔇 Voz não suportada'); return; }
+  window.speechSynthesis.cancel();
+  var utter = new SpeechSynthesisUtterance('Olá! Sou o Meta GSP. Assim é como a minha voz vai soar.');
+  utter.lang = APP_SETTINGS.lang; utter.rate = APP_SETTINGS.rate;
+  var v = getPickedVoice(); if (v) utter.voice = v;
+  window.speechSynthesis.speak(utter);
+}
+
+function checkMicStatus() {
+  var statusEl = document.getElementById('micStatus');
+  statusEl.textContent = 'A verificar...';
+  if (navigator.permissions && navigator.permissions.query) {
+    navigator.permissions.query({ name: 'microphone' }).then(function(res) {
+      statusEl.textContent = res.state === 'granted' ? '✅ Permitido' : res.state === 'denied' ? '⛔ Bloqueado' : '❔ Ainda não pedido';
+    }).catch(function() { statusEl.textContent = '❔ Desconhecido'; });
+  } else {
+    statusEl.textContent = '❔ Não é possível verificar neste navegador';
+  }
+}
+function requestMicPermission() {
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { showToast('🎙️ Microfone não suportado neste navegador'); return; }
+  navigator.mediaDevices.getUserMedia({ audio: true }).then(function(stream) {
+    stream.getTracks().forEach(function(t) { t.stop(); });
+    showToast('🎙️ Permissão concedida!');
+    checkMicStatus();
+  }).catch(function() {
+    showToast('🎙️ Permissão negada');
+    checkMicStatus();
+  });
+}
+
+var IMAGE_TOOL_PROMPTS = {
+  objects: 'Analisa esta imagem como um sistema de reconhecimento de objetos e cenários. Lista os principais objetos, pessoas, animais ou elementos que identificas, e descreve em 1-2 frases o cenário/ambiente geral (interior, exterior, natureza, cidade, etc). Usa uma lista curta com marcadores.',
+  emotion: 'Analisa esta imagem focando em sentimentos e emoções. Se houver pessoas, descreve as expressões faciais e a linguagem corporal visíveis. Descreve também o sentimento ou atmosfera geral transmitida pela cena (ex: alegre, tensa, calma, nostálgica). Explica brevemente o que te leva a essa conclusão.',
+  access: 'Descreve esta imagem de forma clara, objetiva e detalhada, como um texto alternativo (alt-text) para uma pessoa com deficiência visual. Descreve os elementos principais, a disposição espacial, cores relevantes e qualquer texto visível na imagem. Usa frases curtas e diretas.'
+};
+var IMAGE_TOOL_LABELS = {
+  objects: '🔍 Reconhecimento de objetos e cenários',
+  emotion: '😊 Análise de sentimentos e emoções',
+  access: '♿ Descrição de imagem para acessibilidade'
+};
+var imgToolMode = null;
+
+function openImageTool(mode) {
+  imgToolMode = mode;
+  document.getElementById('imgToolInp').click();
+}
+
+async function onImageToolFile(input) {
+  if (!input.files || !input.files[0]) return;
+  var f = input.files[0];
+  var mode = imgToolMode;
+  input.value = '';
+  if (window.innerWidth < 640) closeDr();
+  var fileInfo = { icon: '🖼️', name: f.name, size: humanSize(f.size) };
+  addMsg('user', IMAGE_TOOL_LABELS[mode] || 'Analisar imagem', fileInfo);
+  showTyping();
+  try {
+    var base64 = await fileToBase64(f);
+    hist.push({
+      role: 'user',
+      content: IMAGE_TOOL_PROMPTS[mode] || 'Descreve esta imagem.',
+      image: { mimeType: f.type || 'image/jpeg', data: base64 }
+    });
+    hideTyping();
+    await sendAI();
+    if (mode === 'access') {
+      var rows = document.querySelectorAll('.row.a');
+      var last = rows[rows.length - 1];
+      if (last) { var id = last.id.replace('row-', ''); speakMsg(id); }
+    }
+  } catch (e) {
+    hideTyping();
+    addMsg('assistant', 'Erro ao processar imagem: ' + e.message);
+  }
 }
 
 function openDr() {
@@ -464,27 +807,25 @@ function doSearch(q) {
 }
 
 async function genSummary() {
-  if (hist.length < 2) { showToast('⚠️ Precisas de mais mensagens'); return; }
+  if (hist.length < 2) { showToast('Precisas de mais mensagens'); return; }
   var banner = document.getElementById('sumBanner'), txt = document.getElementById('sumText');
   banner.classList.add('open'); txt.textContent = 'A gerar resumo...';
-  showToast('🧠 A resumir conversa...');
   try {
-    var m = hist.slice();
-    m.push({ role: 'user', content: 'Resume esta conversa em 2-3 frases curtas em portugues.' });
-    var res = await fetch('https://api.anthropic.com/v1/messages', {
+    var contents = hist.map(function(m) {
+      return { role: m.role === 'assistant' ? 'model' : 'user', parts: [{ text: m.content }] };
+    });
+    contents.push({ role: 'user', parts: [{ text: 'Resume em 2-3 frases curtas em portugues.' }] });
+    var res = await fetch('/api/chat', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': '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',
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true'
-      },
-      body: JSON.stringify({ model: 'claude-sonnet-4-6', max_tokens: 200, system: SYS, messages: m })
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ contents: contents, system: 'Resuma de forma breve e direta.' })
     });
     var data = await res.json();
-    txt.textContent = (data.content && data.content[0] && data.content[0].text) || 'Erro ao resumir.';
-  } catch (e) { txt.textContent = 'Erro ao gerar resumo.'; }
+    txt.textContent = (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts[0].text) || 'Erro.';
+  } catch (e) { txt.textContent = 'Erro: ' + e.message; }
 }
+
+
 function closeSummary() { document.getElementById('sumBanner').classList.remove('open'); }
 
 function updateTok(text) {
@@ -705,28 +1046,29 @@ function openTrans(id) {
 }
 function closeTransModal() { document.getElementById('transModal').classList.remove('on'); }
 async function doTrans(code, label) {
-  document.querySelectorAll('.lang-btn').forEach(function(b) { b.classList.remove('sel'); if (b.textContent === label) b.classList.add('sel'); });
-  var row = document.getElementById('row-' + transId); if (!row) return;
-  var bub = row.querySelector('.bub'); var text = bub ? bub.innerText : '';
+  document.querySelectorAll('.lang-btn').forEach(function(b) {
+    b.classList.remove('sel');
+    if (b.textContent === label) b.classList.add('sel');
+  });
+  var row = document.getElementById('row-' + transId);
+  if (!row) return;
+  var bub = row.querySelector('.bub');
+  var text = bub ? bub.innerText : '';
   document.getElementById('transBox').textContent = 'A traduzir...';
   try {
-    var res = await fetch('https://api.anthropic.com/v1/messages', {
+    var res = await fetch('/api/translate', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': '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',
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true'
-      },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-6', max_tokens: 400,
-        messages: [{ role: 'user', content: 'Traduza para ' + label + '. Responda APENAS com a traducao:\n\n' + text }]
-      })
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text: text, label: label })
     });
     var data = await res.json();
-    document.getElementById('transBox').textContent = (data.content && data.content[0] && data.content[0].text) || 'Erro.';
-  } catch (e) { document.getElementById('transBox').textContent = 'Erro na traducao.'; }
+    document.getElementById('transBox').textContent =
+      (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts[0].text) || 'Erro.';
+  } catch (e) {
+    document.getElementById('transBox').textContent = 'Erro: ' + e.message;
+  }
 }
+
 
 function speakMsg(id) {
   if (!window.speechSynthesis) { showToast('🔇 Voz nao suportada'); return; }
@@ -737,10 +1079,9 @@ function speakMsg(id) {
     document.querySelectorAll('.bub.speaking').forEach(function(b) { b.classList.remove('speaking'); });
     if (curSpeak === id) { curSpeak = null; showToast('🔇 Parado'); return; }
   }
-  var utter = new SpeechSynthesisUtterance(text); utter.lang = 'pt-BR'; utter.rate = 0.95;
-  var voices = window.speechSynthesis.getVoices();
-  var pt = voices.find(function(v) { return v.lang && v.lang.indexOf('pt') === 0; });
-  if (pt) utter.voice = pt;
+  var utter = new SpeechSynthesisUtterance(text); utter.lang = APP_SETTINGS.lang; utter.rate = APP_SETTINGS.rate;
+  var v = getPickedVoice();
+  if (v) utter.voice = v;
   bub.classList.add('speaking'); curSpeak = id;
   utter.onend = function() { bub.classList.remove('speaking'); curSpeak = null; };
   window.speechSynthesis.speak(utter);
@@ -865,25 +1206,52 @@ function hideTyping() {
 async function sendAI() {
   showTyping();
   try {
-    var res = await fetch('https://api.anthropic.com/v1/messages', {
+    var contents = hist.map(function(m) {
+      var parts = [];
+      if (m.content) parts.push({ text: m.content });
+      if (m.image) parts.push({ inline_data: { mime_type: m.image.mimeType, data: m.image.data } });
+      return {
+        role: m.role === 'assistant' ? 'model' : 'user',
+        parts: parts
+      };
+    });
+    var res = await fetch('/api/chat', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': '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',
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true'
-      },
-      body: JSON.stringify({ model: 'claude-sonnet-4-6', max_tokens: 1000, system: SYS, messages: hist })
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ contents: contents, system: SYS })
     });
     var data = await res.json();
     hideTyping();
-    var reply = (data.content && data.content[0] && data.content[0].text) || 'Ocorreu um erro. Tente novamente.';
+    if (data.error) {
+      addMsg('assistant', 'Erro Gemini: ' + data.error.message);
+      return;
+    }
+    var reply = data.candidates && data.candidates[0] &&
+                data.candidates[0].content && data.candidates[0].content.parts &&
+                data.candidates[0].content.parts[0].text;
+    if (!reply) {
+      addMsg('assistant', 'Sem resposta. Tenta novamente.');
+      return;
+    }
     hist.push({ role: 'assistant', content: reply });
     addMsg('assistant', reply);
   } catch (e) {
     hideTyping();
-    addMsg('assistant', 'Erro de ligacao. Verifique a sua conexao.');
+    addMsg('assistant', 'Erro: ' + e.message);
   }
+}
+
+
+function fileToBase64(file) {
+  return new Promise(function(resolve, reject) {
+    var reader = new FileReader();
+    reader.onload = function() { resolve(reader.result.split(',')[1]); };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+function humanSize(bytes) {
+  return bytes < 1024 ? bytes + ' B' : bytes < 1048576 ? (bytes / 1024).toFixed(1) + ' KB' : (bytes / 1048576).toFixed(1) + ' MB';
 }
 
 async function send() {
@@ -891,18 +1259,21 @@ async function send() {
   var text = inp.value.trim();
   if (!text && !pendingFile) return;
   inp.value = ''; inp.style.height = 'auto';
-  document.getElementById('wc').textContent = '0 palavras';
-  var fileInfo = null;
+  var fileInfo = null, imageData = null;
   if (pendingFile) {
     var isImg = pendingFile.type.indexOf('image/') === 0;
-    var sz = pendingFile.size < 1024 ? pendingFile.size + ' B'
-      : pendingFile.size < 1048576 ? (pendingFile.size / 1024).toFixed(1) + ' KB'
-      : (pendingFile.size / 1048576).toFixed(1) + ' MB';
+    var sz = humanSize(pendingFile.size);
     fileInfo = { icon: isImg ? '🖼️' : '📄', name: pendingFile.name, size: sz };
-    clearFile();
+    if (isImg) {
+      try { imageData = { mimeType: pendingFile.type || 'image/jpeg', data: await fileToBase64(pendingFile) }; }
+      catch (e) {}
+    }
+    clearFile(); clearPhoto();
   }
   addMsg('user', text, fileInfo);
-  hist.push({ role: 'user', content: (text || '') + (fileInfo ? ' [ficheiro: ' + fileInfo.name + ']' : '') });
+  var entry = { role: 'user', content: text || (imageData ? 'Descreve o que vês nesta imagem.' : '') };
+  if (imageData) entry.image = imageData;
+  hist.push(entry);
   await sendAI();
 }
 
